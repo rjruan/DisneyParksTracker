@@ -1,18 +1,29 @@
-import cors from 'cors';
 import express from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
+
+import rideRoutes from './routes/ride.js';
+// import parkRoutes from './routes/park.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+
+dotenv.config();
+
 const app = express();
-import {connectDB} from './config/database.js';
-import routes from './routes/index.js';
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
-const start = async () => {
-    await connectDB();
-    app.use('/', routes);
-    app.listen(3000, () => {
-        console.log('Server is running on port 3000');
-    })
-}
-start();
+// Routes
+app.use('/rides', rideRoutes);
+// app.use('/parks', parkRoutes);
+app.use('/reviews', reviewRoutes);
+
+// Connect to DB
+mongoose.connect(process.env.URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log(err));
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

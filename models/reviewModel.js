@@ -39,8 +39,14 @@ const reviewSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-reviewSchema.path('rideId parkId').validate(function(value) {
-    return this.rideId || this.parkId;
-}, 'Either rideId or parkId must be provided.');
+reviewSchema.pre('validate', function (next) {
+    if (!this.rideId && !this.parkId) {
+        this.invalidate('rideId', 'Either rideId or parkId must be provided.');
+        this.invalidate('parkId', 'Either rideId or parkId must be provided.');
+    }
+    next();
+});
 
 const Review = mongoose.model('Review', reviewSchema);
+
+export default Review;
