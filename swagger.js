@@ -1,11 +1,14 @@
 import swaggerAutogen from 'swagger-autogen';
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 const doc = {
     info: {
         title: 'Disney Parks Tracker API',
         description: 'API for tracking Disney park rides and wait times',
     },
-    host: 'localhost:3000',
+    host: `${process.env.BASE_URL}:${process.env.PORT}`,
     schemes: ['http', 'https'],
 };
 
