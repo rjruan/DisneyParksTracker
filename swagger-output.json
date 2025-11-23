@@ -5,7 +5,7 @@
     "description": "API for tracking Disney park rides and wait times",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "disneyparkstracker.onrender.com/",
   "basePath": "/",
   "schemes": [
     "http",
