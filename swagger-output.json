@@ -5,6 +5,24 @@
     "description": "API for tracking Disney park rides and wait times",
     "version": "1.0.0"
   },
+  "securityDefinitions": {
+    "info": {
+      "type": "oauth2",
+      "authorizationUrl": "https://disneyparkstracker.onrender.com/authorize",
+      "flow": "accessCode",
+      "tokenUrl": "https://disneyparkstracker.onrender.com/oauth/token",
+      "scopes": {
+        "openid": "OpenID Connect scope",
+        "profile": "Profile information",
+        "email": "Email information"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": ["openid"]
+    }
+  ],
   "host": "disneyparkstracker.onrender.com",
   "basePath": "/",
   "schemes": [
@@ -517,10 +535,10 @@
                   "type": "string"
                 },
                 "favorites": {
-                  "type": "array"
-                },
-                "OAuth": {
-                  "type": "string"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
