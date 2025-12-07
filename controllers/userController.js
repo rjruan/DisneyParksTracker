@@ -11,14 +11,13 @@ async function getManagementToken() {
     if (mgmtToken && now < tokenExpiry - 60) {
         return mgmtToken;
     }
-
-    const res = await fetch(`https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://','')}/oauth/token`, {
+    const res = await fetch(`https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://','')}oauth/token`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
             client_id: process.env.MGMT_CLIENT_ID,
             client_secret: process.env.MGMT_CLIENT_SECRET,
-            audience: `https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://','')}/api/v2/`,
+            audience: `https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://','')}api/v2/`,
             grant_type: 'client_credentials'
         })
     });
@@ -52,11 +51,12 @@ const getUserByUsername = async (req, res) => {
 }
 
 const createUser = async (req,res) => {
+    console.log('Received createUser request with body:', req.body);
     try {
         const token = await getManagementToken();
         const {email, password, username, name, favorites} = req.body;
-
-        const response = await fetch(`https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://','')}/api/v2/users`, {
+        console.log('Creating user with data:', req.body);
+        const response = await fetch(`https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://','')}api/v2/users`, {
             method: 'POST',
             headers: {
                 'content-type': 'application/json',
@@ -65,12 +65,10 @@ const createUser = async (req,res) => {
             body: JSON.stringify({
                 email,
                 password,
-                username,
-                name,
-                favorites: favorites ? favorites : [],
                 connection: 'Username-Password-Authentication'
             })
         });
+        console.log('Auth0 response status:', response);
         if (!response.ok) {
             const errorData = await response.json();
             return res.status(response.status).json({ message: errorData.message });
