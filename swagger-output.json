@@ -23,7 +23,7 @@
       "oauth2": ["openid"]
     }
   ],
-  "host": "disneyparkstracker.onrender.com",
+  "host": "localhost:3000",
   "basePath": "/",
   "schemes": [
     "http",
