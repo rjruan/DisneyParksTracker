@@ -23,7 +23,7 @@
       "oauth2": ["openid"]
     }
   ],
-  "host": "localhost:3000",
+  "host": "disneyparkstracker.onrender.com",
   "basePath": "/",
   "schemes": [
     "http",
@@ -87,8 +87,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID of the park"
+            "type": "string"
           }
         ],
         "responses": {
@@ -111,6 +110,29 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "openingDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": ["name", "location", "openingDate"]
+            }
           }
         ],
         "responses": {
@@ -129,8 +151,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID of the park"
+            "type": "string"
           }
         ],
         "responses": {
