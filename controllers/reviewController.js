@@ -1,78 +1,59 @@
 import Review from '../models/reviewModel.js';
+import AppError from '../errors/AppError.js';
+import catchAsync from '../utils/catchAsync.js';
 
-const getReviews = async (req, res) => {
-    try {
-        const reviews = await Review.find();
-        res.status(200).json(reviews);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+export const getReviews = catchAsync(async (req, res) => {
+  const reviews = await Review.find();
+  res.status(200).json(reviews);
+});
 
-const getParkReviews = async (req, res) => {
-    try {
-        const parkId = req.params.parkId;
-        const reviews = await Review.find({ parkId });
-        if (reviews.length > 0) {
-            res.status(200).json(reviews);
-        } else {
-            res.status(404).json({ message: 'No reviews found for this park' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+export const getParkReviews = catchAsync(async (req, res, next) => {
+  const parkId = req.params.parkId;
+  const reviews = await Review.find({ parkId });
 
-const getRideReviews = async (req, res) => {
-    try {
-        const rideId = req.params.rideId;
-        const reviews = await Review.find({ rideId });
-        if (reviews.length > 0) {
-            res.status(200).json(reviews);
-        } else {
-            res.status(404).json({ message: 'No reviews found for this ride' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+  if (reviews.length === 0) {
+    return next(new AppError('No reviews found for this park', 404));
+  }
 
-const createReview = async (req, res) => {
-    try {
-        const newReview = new Review(req.body);
-        const savedReview = await newReview.save();
-        res.status(201).json(savedReview);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+  res.status(200).json(reviews);
+});
 
-const updateReview = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const updatedReview = await Review.findByIdAndUpdate(id, req.body, { new: true });
-        if (updatedReview) {
-            res.status(200).json(updatedReview);
-        } else {
-            res.status(404).json({ message: 'Review not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+export const getRideReviews = catchAsync(async (req, res, next) => {
+  const rideId = req.params.rideId;
+  const reviews = await Review.find({ rideId });
 
-const deleteReview = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const deletedReview = await Review.findByIdAndDelete(id);
-        if (deletedReview) {
-            res.status(200).json({ message: 'Review deleted successfully' });
-        } else {
-            res.status(404).json({ message: 'Review not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+  if (reviews.length === 0) {
+    return next(new AppError('No reviews found for this ride', 404));
+  }
 
-export { getReviews, getParkReviews, getRideReviews, createReview, updateReview, deleteReview };
+  res.status(200).json(reviews);
+});
+
+export const createReview = catchAsync(async (req, res) => {
+  const review = await Review.create(req.body);
+  res.status(201).json(review);
+});
+
+export const updateReview = catchAsync(async (req, res, next) => {
+  const updatedReview = await Review.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedReview) {
+    return next(new AppError('Review not found', 404));
+  }
+
+  res.status(200).json(updatedReview);
+});
+
+export const deleteReview = catchAsync(async (req, res, next) => {
+  const deletedReview = await Review.findByIdAndDelete(req.params.id);
+
+  if (!deletedReview) {
+    return next(new AppError('Review not found', 404));
+  }
+
+  res.status(200).json({ message: 'Review deleted successfully' });
+});
