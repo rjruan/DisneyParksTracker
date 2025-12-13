@@ -1,52 +1,48 @@
 import Park from '../models/parkModel.js';
+import AppError from '../errors/AppError.js';
+import catchAsync from '../utils/catchAsync.js';
 
-// GET all parks
-export const getParks = async (req, res) => {
-  try {
-    const parks = await Park.find().populate('attractions');
-    res.json(parks);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+export const getParks = catchAsync(async (req, res) => {
+  const parks = await Park.find().populate('attractions');
+  res.status(200).json(parks);
+});
 
-// GET a single park
-export const getParkById = async (req, res) => {
-  try {
-    const park = await Park.findById(req.params.id).populate('attractions');
-    if (!park) return res.status(404).json({ error: "Park not found" });
-    res.json(park);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+export const getParkById = catchAsync(async (req, res, next) => {
+  const park = await Park.findById(req.params.id).populate('attractions');
 
-// POST create park
-export const createPark = async (req, res) => {
-  try {
-    const park = await Park.create(req.body);
-    res.status(201).json(park);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  if (!park) {
+    return next(new AppError('Park not found', 404));
   }
-};
 
-// PUT update park
-export const updatePark = async (req, res) => {
-  try {
-    const park = await Park.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(park);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  res.status(200).json(park);
+});
+
+export const createPark = catchAsync(async (req, res) => {
+  const park = await Park.create(req.body);
+  res.status(201).json(park);
+});
+
+export const updatePark = catchAsync(async (req, res, next) => {
+  const park = await Park.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true, runValidators: true }
+  );
+
+  if (!park) {
+    return next(new AppError('Park not found', 404));
   }
-};
+
+  res.status(200).json(park);
+});
 
 // DELETE delete park
-export const deletePark = async (req, res) => {
-  try {
-    await Park.findByIdAndDelete(req.params.id);
-    res.json({ message: "Park deleted" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+export const deletePark = catchAsync(async (req, res, next) => {
+  const park = await Park.findByIdAndDelete(req.params.id);
+
+  if (!park) {
+    return next(new AppError('Park not found', 404));
   }
-};
+
+  res.status(200).json({ message: 'Park deleted' });
+});
