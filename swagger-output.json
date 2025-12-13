@@ -5,6 +5,24 @@
     "description": "API for tracking Disney park rides and wait times",
     "version": "1.0.0"
   },
+  "securityDefinitions": {
+    "info": {
+      "type": "oauth2",
+      "authorizationUrl": "https://disneyparkstracker.onrender.com/authorize",
+      "flow": "accessCode",
+      "tokenUrl": "https://disneyparkstracker.onrender.com/oauth/token",
+      "scopes": {
+        "openid": "OpenID Connect scope",
+        "profile": "Profile information",
+        "email": "Email information"
+      }
+    }
+  },
+  "security": [
+    {
+      "oauth2": ["openid"]
+    }
+  ],
   "host": "disneyparkstracker.onrender.com",
   "basePath": "/",
   "schemes": [
@@ -14,7 +32,7 @@
   "paths": {
     "/parks/": {
       "get": {
-        "description": "",
+        "description": "Returns all parks in the database",
         "responses": {
           "200": {
             "description": "OK"
@@ -25,7 +43,32 @@
         }
       },
       "post": {
-        "description": "",
+        "description": "Creates a new park in the database",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "openingDate": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": ["name", "location", "openingDate"]
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -38,7 +81,7 @@
     },
     "/parks/{id}": {
       "get": {
-        "description": "",
+        "description": "Returns a specific park by ID",
         "parameters": [
           {
             "name": "id",
@@ -61,14 +104,13 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "Updates a specific park by ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string",
-            "description": "ID of the park"
+            "type": "string"
           }
         ],
         "responses": {
@@ -81,7 +123,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Deletes a specific park by ID",
         "parameters": [
           {
             "name": "id",
@@ -103,7 +145,7 @@
     },
     "/rides/": {
       "get": {
-        "description": "",
+        "description": "Returns all rides in the database",
         "responses": {
           "200": {
             "description": "OK"
@@ -114,7 +156,40 @@
         }
       },
       "post": {
-        "description": "",
+        "description": "Creates a new ride in the database",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "parkId": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "minHeight": {
+                  "type": "number"
+                },
+                "thrillLevel": {
+                  "type": "number"
+                },
+                "duraction": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": ["name", "parkId", "type"]
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -127,7 +202,7 @@
     },
     "/rides/{id}": {
       "get": {
-        "description": "",
+        "description": "Returns a specific ride by ID",
         "parameters": [
           {
             "name": "id",
@@ -149,13 +224,44 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "Updates a specific ride by ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "parkId": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "minHeight": {
+                  "type": "number"
+                },
+                "thrillLevel": {
+                  "type": "number"
+                },
+                "duraction": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": ["name", "parkId", "type"]
+            }
           }
         ],
         "responses": {
@@ -168,7 +274,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Deletes a specific ride by ID",
         "parameters": [
           {
             "name": "id",
@@ -189,7 +295,7 @@
     },
     "/reviews/": {
       "get": {
-        "description": "",
+        "description": "Gets all reviews from the database",
         "responses": {
           "200": {
             "description": "OK"
@@ -200,7 +306,44 @@
         }
       },
       "post": {
-        "description": "",
+        "description": "Creates a new review in the database",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string"
+                },
+                "rideId": {
+                  "type": "string"
+                },
+                "parkId": {
+                  "type": "string"
+                },
+                "rating": {
+                  "type": "number"
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "likes": {
+                  "type": "array"
+                },
+                "tags": {
+                  "type": "array"
+                }
+              },
+              "required": ["username", "rating"]
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -213,7 +356,7 @@
     },
     "/reviews/park/{parkId}": {
       "get": {
-        "description": "",
+        "description": "Get all reviews for a specific park by park ID",
         "parameters": [
           {
             "name": "parkId",
@@ -237,7 +380,7 @@
     },
     "/reviews/ride/{rideId}": {
       "get": {
-        "description": "",
+        "description": "Get all reviews for a specific ride by ride ID",
         "parameters": [
           {
             "name": "rideId",
@@ -261,13 +404,48 @@
     },
     "/reviews/{id}": {
       "put": {
-        "description": "",
+        "description": "Updates a specific review by ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "type": "string"
+                },
+                "rideId": {
+                  "type": "string"
+                },
+                "parkId": {
+                  "type": "string"
+                },
+                "rating": {
+                  "type": "number"
+                },
+                "comment": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                },
+                "likes": {
+                  "type": "array"
+                },
+                "tags": {
+                  "type": "array"
+                }
+              },
+              "required": ["username", "rating"]
+            }
           }
         ],
         "responses": {
@@ -283,7 +461,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Deletes a specific review by ID",
         "parameters": [
           {
             "name": "id",
@@ -307,7 +485,7 @@
     },
     "/users/": {
       "get": {
-        "description": "",
+        "description": "Get all users from the database",
         "responses": {
           "200": {
             "description": "OK"
@@ -318,7 +496,36 @@
         }
       },
       "post": {
-        "description": "",
+        "description": "Creates a new user in the database",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "favorites": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -331,7 +538,7 @@
     },
     "/users/{username}": {
       "get": {
-        "description": "",
+        "description": "Get a specific user by username",
         "parameters": [
           {
             "name": "username",
@@ -353,13 +560,34 @@
         }
       },
       "put": {
-        "description": "",
+        "description": "Updates a specific user by username",
         "parameters": [
           {
             "name": "username",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "favorites": {
+                  "type": "array"
+                },
+                "OAuth": {
+                  "type": "string"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -375,7 +603,7 @@
         }
       },
       "delete": {
-        "description": "",
+        "description": "Deletes a specific user by username",
         "parameters": [
           {
             "name": "username",
