@@ -8,13 +8,19 @@
     "node-fetch": "^3.3.2",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
-  },
+  }, 
   "type": "module",
   "devDependencies": {
+    "jest": "^30.2.0",
     "swagger-autogen": "^2.23.7"
   },
   "scripts": {
-    "swagger": "node swagger.js"
+    "start": "node server.js",
+    "swagger": "node swagger.js",
+    "test": " NODE_OPTIONS=--experimental-vm-modules jest"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"
 }
