@@ -67,41 +67,65 @@ export const createUser = catchAsync(async (req, res, next) => {
 
   const token = await getManagementToken();
 
-  const response = await fetch(
-    `https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://', '')}api/v2/users`,
+  const doesUserExist = await fetch(
+    `https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://', '')}api/v2/users-by-email?email=${encodeURIComponent(
+      email
+    )}`,
     {
-      method: 'POST',
       headers: {
-        'content-type': 'application/json',
         authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        email,
-        password,
-        connection: 'Username-Password-Authentication',
-      }),
     }
   );
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new AppError(
-      `Auth0 user creation failed: ${errorData.message}`,
-      response.status
-    );
+  if (doesUserExist.ok) {
+    const existingUsers = await doesUserExist.json();
+    const newUser = new User({
+      OAuth: existingUsers[0].user_id,
+      name,
+      email,
+      username,
+      favorites: favorites || [],
+    });
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
   }
+  else{
+    const response = await fetch(
+      `https://${process.env.AUTH0_ISSUER_BASE_URL.replace('https://', '')}api/v2/users`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          connection: 'Username-Password-Authentication',
+        }),
+      }
+    );
 
-  const authData = await response.json();
-  const newUser = new User({
-    OAuth: authData.user_id,
-    name,
-    email,
-    username,
-    favorites: favorites || [],
-  });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new AppError(
+        `Auth0 user creation failed: ${errorData.message}`,
+        response.status
+      );
+    }
 
-  const savedUser = await newUser.save();
-  res.status(201).json(savedUser);
+    const authData = await response.json();
+    const newUser = new User({
+      OAuth: authData.user_id,
+      name,
+      email,
+      username,
+      favorites: favorites || [],
+    });
+
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
+  }
 });
 
 export const updateUser = catchAsync(async (req, res, next) => {
