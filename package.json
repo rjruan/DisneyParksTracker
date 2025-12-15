@@ -1,14 +1,16 @@
 {
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-openid-connect": "^2.19.3",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.20.1",
     "node-fetch": "^3.3.2",
     "swagger-autogen": "^2.23.7",
     "swagger-ui-express": "^5.0.1"
-  }, 
+  },
   "type": "module",
   "devDependencies": {
     "jest": "^30.2.0",
@@ -17,7 +19,7 @@
   "scripts": {
     "start": "node server.js",
     "swagger": "node swagger.js",
-    "test": " NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "jest": {
     "testEnvironment": "node"
