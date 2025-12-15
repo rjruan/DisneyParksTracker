@@ -23,5 +23,8 @@ router.use('/rides', rideRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/users', userRoutes);
 router.use('/parks', parkRoutes);
+router.get('/callback', (req, res) => {
+    res.redirect('/api-docs');
+});
 
 export {router, requiresAuth};
