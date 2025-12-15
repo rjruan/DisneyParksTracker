@@ -78,6 +78,10 @@ export const createUser = catchAsync(async (req, res, next) => {
     }
   );
   if (doesUserExist.ok) {
+    const user = await User.findOne({ email });
+    if (user) {
+      return next(new AppError('User already exists', 400));
+    }
     const existingUsers = await doesUserExist.json();
     const newUser = new User({
       OAuth: existingUsers[0].user_id,
