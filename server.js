@@ -13,23 +13,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-const config = {
-    authRequired: false,
-    auth0Logout: true,
-    secret: process.env.AUTH0_SECRET,
-    baseURL: process.env.AUTH0_BASE_URL,
-    clientID: process.env.AUTH0_CLIENT_ID,
-    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
-    routes: {
-        login: '/authorize',
-        callback: '/callback',
-        logout: '/logout'
-    }
-}
+
 
 const start = async () => {
     await connectDB();
-    app.use(auth(config));
     app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerFile));
     app.use('/', router);
 

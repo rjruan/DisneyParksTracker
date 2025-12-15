@@ -14,7 +14,12 @@ const config = {
     secret: process.env.AUTH0_SECRET,
     baseURL: process.env.AUTH0_BASE_URL,
     clientID: process.env.AUTH0_CLIENT_ID,
-    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL
+    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
+    routes: {
+        login: '/authorize',
+        callback: '/callback',
+        logout: '/logout'
+    }
 }
 
 router.use(auth(config));
@@ -23,8 +28,8 @@ router.use('/rides', rideRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/users', userRoutes);
 router.use('/parks', parkRoutes);
-router.get('/callback', (req, res) => {
-    res.redirect('/api-docs');
+router.get('/authorize', (req, res) => {
+    res.oidc.login({returnTo: '/api-docs'});
 });
 
 export {router, requiresAuth};
