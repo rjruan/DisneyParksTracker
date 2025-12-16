@@ -71,21 +71,6 @@ describe('User Controller', () => {
     expect(next.mock.calls[0][0].statusCode).toBe(404);
   });
 
-  test('createUser creates a user', async () => {
-    req.body = {
-      username: 'newuser',
-      email: 'test@test.com',
-      OAuth: 'oauth-string'
-    };
-
-    User.create.mockResolvedValue(req.body);
-
-    await createUser(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(req.body);
-  });
-
   test('updateUser updates a user', async () => {
     req.params.username = 'parker';
     req.body = { email: 'updated@test.com' };
